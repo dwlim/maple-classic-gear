@@ -1,6 +1,6 @@
 # Maple Gearbook
 
-A small static site for building and sharing MapleStory Classic gear loadouts. Click a supported slot, enter an item and its bonuses, then copy a link to share the full loadout. Supported slots are Head, Earring, Top, Bottom, Overall, Cape, Glove, Shoes, Weapon, and Shield.
+A small static site for building and sharing MapleStory Classic gear loadouts. Click a supported slot, enter an item and its bonuses, then copy a link to share the full loadout. Supported slots are Head, Earring, Top, Bottom, Overall, Cape, Glove, Shoes, Weapon, Shield, and Pet Equip.
 
 ## Sharing and privacy
 
