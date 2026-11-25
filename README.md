@@ -4,6 +4,8 @@ A small static site for building and sharing MapleStory Classic gear loadouts. C
 
 The equipment panel uses the inventory screenshot supplied for the project as its background (`assets/equipment-inventory.png`), with clickable slots layered over it. Equipped item art and item picker thumbnails load from the `icon_url` images in the OSMS catalog.
 
+When editing an item, its unscrolled base stats can be adjusted from the OSMS clean value. Values below 10 allow ±1 and values of 10 or more allow ±5, with a floor of zero. These adjusted values are included in local saves and shared links.
+
 Supported slots are Head, Earring, Top, Bottom, Overall, Cape, Glove, Shoes, Weapon, Shield, and Pet Equip. The current OSMS equipment catalog has no Pet Equip entries, so that slot is shown but disabled until the source includes compatible items.
 
 ## Sharing and privacy
