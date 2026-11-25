@@ -463,10 +463,15 @@ function renderScrollEditor(item) {
     if (!groups.has(title)) groups.set(title, []);
     groups.get(title).push(scroll);
   });
-  const colorFor = (scroll) =>
-    scroll.scroll?.tier === "Chaos" || /: Chaos$/.test(scroll.name)
-      ? "chaos"
-      : String(scroll.scroll?.success_rate ?? "");
+  const colorFor = (scroll) => {
+    if (
+      String(scroll.scroll?.tier || "").toLocaleLowerCase() === "chaos" ||
+      /: Chaos$/i.test(scroll.name)
+    )
+      return "chaos";
+    const successRate = Number(scroll.scroll?.success_rate);
+    return [10, 60, 100].includes(successRate) ? String(successRate) : "other";
+  };
   const orderFor = (scroll) =>
     ({ 10: 0, 60: 1, 100: 2, chaos: 3 })[colorFor(scroll)] ?? 4;
   const body = [...groups.entries()]
@@ -482,10 +487,10 @@ function renderScrollEditor(item) {
               formatStats(scroll.scroll?.stats) ||
               scroll.scroll?.stat ||
               "No stat effect listed",
-            rate =
-              scroll.scroll?.success_rate != null
-                ? `${scroll.scroll.success_rate}% success`
-                : "";
+            successRate = Number(scroll.scroll?.success_rate),
+            rate = [10, 60, 100].includes(successRate)
+              ? `${successRate}% success`
+              : "";
           return `<div class="scroll-row" data-scroll-color="${colorFor(scroll)}"><div class="scroll-row-info">${scroll.icon_url ? `<img class="scroll-row-thumb" src="${escapeHtml(scroll.icon_url)}" alt="" loading="lazy">` : ""}<strong>${escapeHtml(scroll.name)}</strong><span>${escapeHtml([rate, effect].filter(Boolean).join(" · "))}</span></div><div class="scroll-qty"><button type="button" data-scroll-step="-1" data-scroll-id="${scroll.id}" aria-label="Use one fewer ${escapeHtml(scroll.name)}" ${count <= 0 ? "disabled" : ""}>−</button><input type="number" min="0" max="${remaining}" step="1" value="${count}" data-scroll-qty="${scroll.id}" aria-label="Quantity of ${escapeHtml(scroll.name)}"><button type="button" data-scroll-step="1" data-scroll-id="${scroll.id}" aria-label="Use one more ${escapeHtml(scroll.name)}" ${count >= remaining ? "disabled" : ""}>+</button></div></div>`;
         })
         .join("");
@@ -1173,10 +1178,44 @@ $("scrollEditor").addEventListener("click", (event) => {
     current = Number(draftScrollCounts[String(id)]) || 0;
   setScrollCount(id, current + Number(button.dataset.scrollStep));
 });
+function normalizeCatalogRecord(item) {
+  if (!item || typeof item !== "object" || Array.isArray(item)) return null;
+  const id = Number(item.id),
+    name = typeof item.name === "string" ? item.name.trim() : "";
+  if (!Number.isSafeInteger(id) || id <= 0 || !name) return null;
+  let iconUrl = "";
+  if (typeof item.icon_url === "string" && item.icon_url.trim()) {
+    try {
+      const url = new URL(item.icon_url, location.href);
+      if (url.protocol === "http:" || url.protocol === "https:")
+        iconUrl = item.icon_url.trim();
+    } catch (error) {}
+  }
+  return {
+    ...item,
+    id,
+    name,
+    icon_url: iconUrl,
+    stats:
+      item.stats && typeof item.stats === "object" && !Array.isArray(item.stats)
+        ? item.stats
+        : {},
+    scroll:
+      item.scroll &&
+      typeof item.scroll === "object" &&
+      !Array.isArray(item.scroll)
+        ? item.scroll
+        : null,
+  };
+}
 function installCatalog(data) {
   if (!Array.isArray(data)) throw new Error("Invalid OSMS catalog format");
-  catalog = data.filter(
-    (item) => item.category === "Equipment" && item.id && item.name,
+  const records = data.map(normalizeCatalogRecord).filter(Boolean);
+  catalog = records.filter(
+    (item) =>
+      item.category === "Equipment" &&
+      typeof item.sub_category === "string" &&
+      item.sub_category,
   );
   if (!catalog.length)
     throw new Error("OSMS returned an empty equipment catalog");
@@ -1199,7 +1238,14 @@ function installCatalog(data) {
   };
   catalogById.set(genericPetEquip.id, genericPetEquip);
   catalogBySlot["Pet Equip"] = [genericPetEquip];
-  const allScrolls = data.filter((item) => item.scroll && item.id && item.name);
+  const allScrolls = records
+    .filter(
+      (item) =>
+        item.scroll &&
+        typeof item.scroll.slot === "string" &&
+        item.scroll.slot.trim(),
+    )
+    .sort((a, b) => a.id - b.id);
   scrollById = new Map(allScrolls.map((item) => [Number(item.id), item]));
   scrollByFamily = new Map();
   allScrolls.forEach((item) => {
