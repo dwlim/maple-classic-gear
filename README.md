@@ -2,7 +2,7 @@
 
 A small static site for building and sharing MapleStory Classic gear loadouts. Choose equipment from the live OSMS Data Explorer catalog, then choose compatible scrolls and set the quantity of each that landed. The total is capped by the equipment's upgrade-slot count. The catalog is fetched from the [OSMS items API](https://osmsdataexplorer.com/data/api/v1/items.json) when the page loads. Equipment names, categories, base stats, slot counts, scroll targets, success rates, and scroll stats come from that catalog; compatibility includes weapon type and the game's `Other` scroll family.
 
-The equipment panel uses the inventory screenshot supplied for the project as its background (`assets/equipment-inventory.png`), with clickable text slots layered over it.
+The equipment panel uses the inventory screenshot supplied for the project as its background (`assets/equipment-inventory.png`), with clickable slots layered over it. Equipped item art and item picker thumbnails load from the `icon_url` images in the OSMS catalog.
 
 Supported slots are Head, Earring, Top, Bottom, Overall, Cape, Glove, Shoes, Weapon, Shield, and Pet Equip. The current OSMS equipment catalog has no Pet Equip entries, so that slot is shown but disabled until the source includes compatible items.
 
