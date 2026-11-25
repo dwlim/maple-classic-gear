@@ -86,8 +86,7 @@ a {
   text-decoration: none;
   padding: 9px 13px;
 }
-.top-share,
-.primary {
+.top-share {
   border: 0;
   background: var(--green);
   color: white;
@@ -96,8 +95,7 @@ a {
   padding: 10px 16px;
   box-shadow: 0 2px 0 #154b34;
 }
-.top-share:hover,
-.primary:hover {
+.top-share:hover {
   background: #246449;
 }
 .wrap {
@@ -127,11 +125,6 @@ a {
   letter-spacing: -1.4px;
   margin: 0;
 }
-.intro p {
-  color: var(--muted);
-  margin: 9px 0 0;
-  font-size: 14px;
-}
 .intro-actions {
   display: grid;
   justify-items: end;
@@ -143,27 +136,11 @@ a {
   gap: 6px;
   width: 160px;
 }
-.intro-action-buttons .primary,
 .intro-action-buttons .secondary {
   width: 100%;
   flex: 0 0 auto;
   white-space: nowrap;
   text-align: center;
-}
-.intro-actions .share-status {
-  margin: 0;
-  min-height: 0;
-}
-.version {
-  border: 1px solid #dce4d9;
-  background: #f0f4ed;
-  color: #65766a;
-  border-radius: 20px;
-  padding: 6px 11px;
-  font:
-    11px "DM Mono",
-    monospace;
-  white-space: nowrap;
 }
 .layout {
   display: grid;
@@ -179,23 +156,6 @@ a {
 }
 .gear-card {
   padding: 22px 24px 24px;
-}
-.card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 19px;
-}
-.card-head h2 {
-  font:
-    700 17px Manrope,
-    sans-serif;
-  letter-spacing: -0.4px;
-  margin: 0;
-}
-.hint {
-  color: #969e95;
-  font-size: 11px;
 }
 .slot-grid {
   display: grid;
@@ -223,17 +183,6 @@ a {
   background: #f6faf5;
   transform: translateY(-1px);
 }
-.slot-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  background: #f0f3ed;
-  display: grid;
-  place-items: center;
-  color: #7f9383;
-  font-size: 19px;
-  line-height: 1;
-}
 .slot-label {
   font-size: 10px;
   color: #8d958c;
@@ -254,33 +203,6 @@ a {
   border-color: #d2e3d6;
   background: #f5faf5;
 }
-.slot:not(.empty) .slot-icon {
-  background: #e5f0e7;
-  color: var(--green);
-}
-.slot .edit-dot {
-  display: none;
-  position: absolute;
-  right: 7px;
-  top: 7px;
-  color: #78907e;
-  font-size: 10px;
-}
-.slot:not(.empty) .edit-dot {
-  display: block;
-}
-.group-label {
-  grid-column: 1/-1;
-  margin: 13px 0 -4px;
-  padding-bottom: 7px;
-  border-bottom: 1px solid #edf0eb;
-  color: #8a948a;
-  font:
-    500 10px "DM Mono",
-    monospace;
-  text-transform: uppercase;
-  letter-spacing: 0.13em;
-}
 .gear-foot {
   display: flex;
   justify-content: space-between;
@@ -300,31 +222,6 @@ a {
 }
 .clear-btn:hover {
   color: #b24c45;
-}
-.side {
-  display: grid;
-  gap: 15px;
-}
-.character {
-  padding: 19px 20px 20px;
-}
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font:
-    700 14px Manrope,
-    sans-serif;
-  margin: 0 0 15px;
-}
-.section-title .tiny-icon {
-  background: #eff4ee;
-  width: 25px;
-  height: 25px;
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-  font-size: 13px;
 }
 .field {
   display: grid;
@@ -354,11 +251,6 @@ a {
 .stat-input:focus {
   border-color: #85ac91;
   box-shadow: 0 0 0 3px #e8f2e9;
-}
-.row2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
 }
 .stats {
   padding: 19px 20px 18px;
@@ -420,31 +312,6 @@ a {
   color: #a2a9a1;
   margin: 11px 0 0;
 }
-.share-card {
-  padding: 18px 20px 20px;
-  background: #f1f6ef;
-  border-color: #dfe9dd;
-}
-.share-card h2 {
-  font:
-    700 14px Manrope,
-    sans-serif;
-  margin: 0 0 5px;
-}
-.share-card p {
-  font-size: 11px;
-  color: #788478;
-  margin: 0 0 13px;
-}
-.share-actions {
-  display: flex;
-  gap: 8px;
-}
-.primary {
-  flex: 1;
-  padding: 10px 12px;
-  font-size: 12px;
-}
 .secondary {
   border: 1px solid #dce5da;
   background: #fff;
@@ -457,12 +324,6 @@ a {
 .secondary:hover {
   border-color: #9ab49d;
   background: #fafff9;
-}
-.share-status {
-  min-height: 17px;
-  margin-top: 8px;
-  color: #548063;
-  font-size: 10px;
 }
 .footer {
   margin-top: 26px;
@@ -519,14 +380,6 @@ a {
 }
 .modal .field {
   margin-bottom: 12px;
-}
-.bonus-label {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.11em;
-  color: #899489;
-  margin: 14px 0 8px;
 }
 .modal-actions {
   display: flex;
@@ -597,12 +450,6 @@ a {
   }
   .slot {
     min-height: 88px;
-  }
-  .side {
-    grid-template-columns: 1fr;
-  }
-  .card-head {
-    margin-bottom: 13px;
   }
 }
 @media (min-width: 761px) and (max-width: 960px) {
@@ -797,17 +644,6 @@ a {
   transform: none;
   z-index: 2;
 }
-.slot-icon {
-  width: 43px;
-  height: 43px;
-  border-radius: 0;
-  background: transparent;
-  color: #303d41;
-  font-size: 31px;
-  line-height: 43px;
-  text-shadow: 1px 1px #fff;
-  filter: drop-shadow(1px 2px 1px #56636b77);
-}
 .slot-label {
   position: absolute;
   top: 1px;
@@ -849,20 +685,6 @@ a {
 .slot:not(.empty) {
   border-color: #698da0;
   background: #9ec5d2bb;
-}
-.slot:not(.empty) .slot-icon {
-  background: transparent;
-  color: #264a5d;
-}
-.slot .edit-dot {
-  display: none;
-  right: 1px;
-  top: 0;
-  color: #315d72;
-  font: 11px/12px sans-serif;
-}
-.slot:not(.empty) .edit-dot {
-  display: block;
 }
 .gear-foot {
   height: 48px;
@@ -909,9 +731,6 @@ a {
     height: 61px;
     min-height: 0;
   }
-  .below-cards {
-    grid-template-columns: 1fr;
-  }
   .details-panel {
     padding: 10px;
   }
@@ -924,10 +743,6 @@ a {
     grid-template-columns: repeat(5, minmax(0, 1fr));
     grid-template-rows: repeat(6, 67px);
   }
-}
-.slot-icon,
-.slot .edit-dot {
-  display: none !important;
 }
 .slot {
   justify-content: center;
@@ -988,6 +803,10 @@ a {
   max-height: 90vh;
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+.modal :focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
 }
 html.modal-open,
 body.modal-open {
@@ -1107,27 +926,6 @@ body.modal-open {
   font:
     10px "DM Sans",
     sans-serif;
-}
-.scroll-row select:disabled {
-  background: #f4f5f2;
-  color: #a0a79f;
-}
-.scroll-row .scroll-choice {
-  grid-column: 1/-1;
-}
-.scroll-row .scroll-result {
-  grid-column: 2;
-  grid-row: 1;
-}
-.scroll-row-head {
-  grid-column: 1/-1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.scroll-row-head span {
-  font-size: 9px;
-  color: #8b968b;
 }
 .scroll-foot {
   font:
@@ -1524,6 +1322,12 @@ body.modal-open {
     10px "DM Mono",
     monospace;
 }
+.catalog-status {
+  margin-left: auto;
+  color: #71838c;
+  font-size: 8px;
+  white-space: nowrap;
+}
 .clear-btn {
   color: #526977;
   font:
@@ -1555,9 +1359,6 @@ body.modal-open {
     height: 95%;
     min-height: 0;
   }
-  .side {
-    grid-template-columns: 1fr;
-  }
 }
 @media (min-width: 761px) and (max-width: 960px) {
   .gear-card {
@@ -1584,45 +1385,6 @@ body.modal-open {
     #101525 100%
   );
   box-shadow: 0 8px 24px #11172a22;
-}
-.details-toolbar {
-  margin: 0 0 10px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 12px;
-}
-.details-toolbar .eyebrow {
-  margin: 0;
-  color: #d7bb71;
-  font-size: 9px;
-}
-.details-toolbar h2 {
-  margin: 1px 0 0;
-  font:
-    700 18px Manrope,
-    sans-serif;
-  color: #fff;
-}
-.details-subtitle {
-  margin: 1px 0 0;
-  color: #aeb5c3;
-  font-size: 10px;
-}
-.details-actions {
-  display: flex;
-  gap: 8px;
-}
-.details-actions .secondary {
-  min-width: 90px;
-}
-.details-panel .secondary {
-  border-color: #6b7893;
-  background: #28314e;
-  color: #ece8df;
-}
-.details-panel .secondary:hover {
-  background: #364364;
 }
 .details-grid {
   display: grid;
@@ -1653,15 +1415,6 @@ body.modal-open {
   border: 1px solid #aab7c54a;
   pointer-events: none;
 }
-.item-window-title {
-  text-align: center;
-  color: #edbb3f;
-  font:
-    700 13px/17px Georgia,
-    serif;
-  text-shadow: 1px 2px #6b3d04;
-  margin: 0 0 3px;
-}
 .item-window-name {
   display: flex;
   align-items: center;
@@ -1679,9 +1432,6 @@ body.modal-open {
   content: "•";
   color: #5cc6e5;
   font-size: 17px;
-}
-.item-window-overall {
-  color: #f2d276;
 }
 .item-window-top {
   display: grid;
@@ -1735,10 +1485,6 @@ body.modal-open {
 }
 .item-class-tab.allowed {
   color: #f17927;
-}
-.item-class-tab.selected {
-  outline: 1px solid #f6d17c;
-  background: #4b4050;
 }
 .item-window-stats {
   border-top: 1px solid #b1b5c557;
@@ -1817,11 +1563,9 @@ body.modal-open {
 @media print {
   .topbar,
   .intro,
-  .below-layout,
   .equipment-column > .stats,
   .footer,
-  .gear-foot,
-  .details-actions {
+  .gear-foot {
     display: none !important;
   }
   .wrap {
@@ -1839,16 +1583,6 @@ body.modal-open {
   .details-panel {
     min-height: 0;
     padding: 6px;
-  }
-  .details-toolbar {
-    margin-bottom: 6px;
-  }
-  .details-toolbar .eyebrow,
-  .details-subtitle {
-    color: #444;
-  }
-  .details-toolbar h2 {
-    color: #111;
   }
   .details-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -9,6 +9,8 @@ A static, build-free site for creating and sharing MapleStory Classic gear loado
 - Adjust an item's clean base stat roll within the supported variance range. Gear bonuses include clean stat selections and successful scroll bonuses.
 - Save changes automatically in this browser, share a loadout link, or export the item detail cards as a PNG.
 - View item requirements, class eligibility, weapon type and speed, stats, remaining upgrade slots, and item art.
+- If OSMS is unavailable, reuse the last catalog saved in this browser and label it as offline data.
+- Navigate and close the equipment modal with the keyboard; focus stays inside the modal and returns to the selected slot when it closes.
 
 The equipment inventory background is stored at `assets/equipment-inventory.png`. Pet Equip uses the locally hosted Red Top Hat image at `assets/red-top-hat.png`. Other equipment icons are loaded from the OSMS catalog's `icon_url` values.
 
@@ -16,7 +18,7 @@ Image export uses the locally bundled `html-to-image` v1.11.11 library under the
 
 ## Sharing and privacy
 
-The site has no account system or server database. Loadouts are saved in the current browser's local storage and encoded in the URL fragment. New share links use gzip compression when the browser supports the Compression Streams API; older link formats remain readable. The URL fragment is not sent to GitHub Pages in an HTTP request. Anyone with the link can view its loadout data. The browser requests the public OSMS item catalog at startup; the loadout is not sent with that request.
+The site has no account system or server database. Loadouts and the last successfully fetched OSMS catalog are saved in the current browser's local storage; loadouts are also encoded in the URL fragment. New share links use gzip compression when the browser supports the Compression Streams API; older link formats remain readable. The URL fragment is not sent to GitHub Pages in an HTTP request. Anyone with the link can view its loadout data. The browser requests the public OSMS item catalog at startup; the loadout is not sent with that request.
 
 ## Project files
 

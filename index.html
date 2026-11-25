@@ -27,7 +27,7 @@
         >
       </nav>
     </header>
-    <main class="wrap">
+    <main class="wrap" id="mainContent">
       <section class="intro">
         <div>
           <p class="eyebrow">Your gear, your story</p>
@@ -84,6 +84,8 @@
             </div>
             <div class="gear-foot">
               <span id="equippedCount">0 items equipped</span
+              ><span id="catalogStatus" class="catalog-status" hidden
+                >Offline catalog</span
               ><button class="clear-btn" id="clearGear">Clear all gear</button>
             </div>
           </section>
@@ -130,14 +132,14 @@
         >
       </footer>
     </main>
-    <div
-      class="modal-backdrop"
-      id="modalBackdrop"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modalTitle"
-    >
-      <section class="modal">
+    <div class="modal-backdrop" id="modalBackdrop">
+      <section
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+        aria-describedby="modalSubtitle"
+      >
         <div class="modal-head">
           <div>
             <h2 id="modalTitle">Add equipment</h2>

@@ -110,9 +110,12 @@ const otherScrollPrefixes = {
   "Pet Equip": ["Pet Equip "],
 };
 const OSMS_ITEMS_URL = "https://osmsdataexplorer.com/data/api/v1/items.json";
+const OSMS_CATALOG_CACHE_KEY = "maple-gearbook-osms-cache-v1";
 const blank = () => ({ id: null, name: "", scrolls: [] });
 let gear = Object.fromEntries(slots.map((s) => [s, blank()])),
-  editing = null;
+  editing = null,
+  modalReturnFocus = null,
+  catalogSource = "live";
 let catalog = [],
   catalogById = new Map(),
   catalogBySlot = Object.fromEntries(slots.map((s) => [s, []])),
@@ -151,6 +154,7 @@ function build(persist = true) {
       (imageLabeledSlots.has(name) ? " has-bg-label" : "") +
       (source?.icon_url ? " has-item-image" : "");
     b.disabled = !available || blocked;
+    b.dataset.slotName = name;
     b.style.setProperty("--col", col);
     b.style.setProperty("--row", row);
     b.setAttribute(
@@ -173,6 +177,7 @@ function build(persist = true) {
   $("equippedCount").textContent = catalogReady
     ? `${equipped} item${equipped === 1 ? "" : "s"} equipped`
     : "Loading OSMS equipment…";
+  $("catalogStatus").hidden = catalogSource !== "cached";
   $("statGrid").innerHTML = statKeys
     .map(
       (k) =>
@@ -416,6 +421,9 @@ function setFailedScrollCount(value) {
     Math.max(0, slots - other),
   );
   renderScrollEditor(selectedCatalogItem);
+  $("scrollEditor")
+    .querySelector("[data-failed-qty]")
+    ?.focus({ preventScroll: true });
   saveDraftItem();
 }
 function setScrollCount(id, value) {
@@ -429,6 +437,9 @@ function setScrollCount(id, value) {
   if (next) draftScrollCounts[key] = next;
   else delete draftScrollCounts[key];
   renderScrollEditor(selectedCatalogItem);
+  $("scrollEditor")
+    .querySelector(`[data-scroll-qty="${key}"]`)
+    ?.focus({ preventScroll: true });
   saveDraftItem();
 }
 function renderScrollEditor(item) {
@@ -524,6 +535,9 @@ function setBaseStat(key, value) {
   if (number === clean) delete draftBaseStats[key];
   else draftBaseStats[key] = number;
   renderBaseStatEditor(selectedCatalogItem);
+  $("baseStatEditor")
+    .querySelector(`[data-base-stat="${key}"]`)
+    ?.focus({ preventScroll: true });
   saveDraftItem();
 }
 function selectCatalogItem(item, preserveDraft = false) {
@@ -560,6 +574,17 @@ function selectCatalogItem(item, preserveDraft = false) {
     $("scrollEditor").innerHTML = "";
   }
   renderCatalogResults($("itemSearch").value);
+  if (item) {
+    const firstControl =
+      $("baseStatEditor").querySelector(
+        "button:not(:disabled), input:not(:disabled)",
+      ) ||
+      $("scrollEditor").querySelector(
+        "button:not(:disabled), input:not(:disabled)",
+      ) ||
+      $("removeItem");
+    firstControl.focus({ preventScroll: true });
+  }
 }
 function renderCatalogResults(query = "") {
   const list = editing ? catalogBySlot[editing] || [] : [];
@@ -583,6 +608,7 @@ function renderCatalogResults(query = "") {
 }
 function openModal(name) {
   if (!catalogReady) return;
+  modalReturnFocus = { element: document.activeElement, slot: name };
   editing = name;
   const item =
       (name === "Top" && gear.Overall?.id ? gear.Overall : gear[name]) ||
@@ -609,14 +635,30 @@ function openModal(name) {
   renderCatalogResults(item.name || "");
   document.documentElement.classList.add("modal-open");
   document.body.classList.add("modal-open");
+  document.querySelector(".topbar").inert = true;
+  $("mainContent").inert = true;
   $("modalBackdrop").classList.add("open");
-  setTimeout(() => $("itemSearch").focus(), 30);
+  setTimeout(() => {
+    if ($("modalBackdrop").classList.contains("open")) $("itemSearch").focus();
+  }, 30);
 }
-function closeModal() {
+function closeModal(restoreFocus = true) {
   $("modalBackdrop").classList.remove("open");
   document.documentElement.classList.remove("modal-open");
   document.body.classList.remove("modal-open");
+  document.querySelector(".topbar").inert = false;
+  $("mainContent").inert = false;
   editing = null;
+  const returnFocus = modalReturnFocus;
+  modalReturnFocus = null;
+  if (restoreFocus && returnFocus) {
+    const target = returnFocus.element?.isConnected
+      ? returnFocus.element
+      : [...$("slotGrid").querySelectorAll(".slot")].find(
+          (button) => button.dataset.slotName === returnFocus.slot,
+        );
+    target?.focus({ preventScroll: true });
+  }
 }
 function saveDraftItem() {
   if (!editing || !selectedCatalogItem) return false;
@@ -902,22 +944,61 @@ function toast(message) {
   $("toast").classList.add("show");
   setTimeout(() => $("toast").classList.remove("show"), 2200);
 }
-$("slotGrid").addEventListener("click", () => {});
 $("closeModal").onclick = closeModal;
 $("modalBackdrop").addEventListener("click", (e) => {
   if (e.target === $("modalBackdrop")) closeModal();
 });
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeModal();
+  if (!$("modalBackdrop").classList.contains("open")) return;
+  if (e.key === "Escape") {
+    closeModal();
+    return;
+  }
+  if (e.key !== "Tab") return;
+  const focusable = [
+    ...$("modalBackdrop").querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    ),
+  ].filter(
+    (element) =>
+      element.getClientRects().length &&
+      getComputedStyle(element).visibility !== "hidden",
+  );
+  if (!focusable.length) {
+    e.preventDefault();
+    return;
+  }
+  const first = focusable[0],
+    last = focusable[focusable.length - 1],
+    active = document.activeElement;
+  if (
+    e.shiftKey &&
+    (active === first || !$("modalBackdrop").contains(active))
+  ) {
+    e.preventDefault();
+    last.focus();
+  } else if (
+    !e.shiftKey &&
+    (active === last || !$("modalBackdrop").contains(active))
+  ) {
+    e.preventDefault();
+    first.focus();
+  }
 });
 $("removeItem").onclick = () => {
   if (editing) {
+    const slotToFocus = editing;
     if (editing === "Top") {
       gear.Top = blank();
       gear.Overall = blank();
     } else gear[editing] = blank();
-    closeModal();
+    closeModal(false);
     build();
+    const slotButton = [...$("slotGrid").querySelectorAll(".slot")].find(
+      (button) =>
+        button.getAttribute("aria-label").startsWith(`Choose ${slotToFocus} `),
+    );
+    slotButton?.focus({ preventScroll: true });
   }
 };
 async function capturePreviewBlob() {
@@ -1092,56 +1173,104 @@ $("scrollEditor").addEventListener("click", (event) => {
     current = Number(draftScrollCounts[String(id)]) || 0;
   setScrollCount(id, current + Number(button.dataset.scrollStep));
 });
+function installCatalog(data) {
+  if (!Array.isArray(data)) throw new Error("Invalid OSMS catalog format");
+  catalog = data.filter(
+    (item) => item.category === "Equipment" && item.id && item.name,
+  );
+  if (!catalog.length)
+    throw new Error("OSMS returned an empty equipment catalog");
+  catalogById = new Map(catalog.map((item) => [Number(item.id), item]));
+  catalogBySlot = Object.fromEntries(
+    slots.map((slot) => [
+      slot,
+      catalog.filter((item) =>
+        (osmsCategoryBySlot[slot] || []).includes(item.sub_category),
+      ),
+    ]),
+  );
+  const genericPetEquip = {
+    id: 1802007,
+    name: "Red Top Hat",
+    category: "Equipment",
+    sub_category: "Pet Equip",
+    stats: { reqLevel: 0, tuc: 5 },
+    icon_url: "assets/red-top-hat.png",
+  };
+  catalogById.set(genericPetEquip.id, genericPetEquip);
+  catalogBySlot["Pet Equip"] = [genericPetEquip];
+  const allScrolls = data.filter((item) => item.scroll && item.id && item.name);
+  scrollById = new Map(allScrolls.map((item) => [Number(item.id), item]));
+  scrollByFamily = new Map();
+  allScrolls.forEach((item) => {
+    const key = scrollFamilyKey(item);
+    if (!scrollByFamily.has(key)) scrollByFamily.set(key, item);
+  });
+  scrollCatalog = [...scrollByFamily.values()];
+  catalogReady = true;
+}
+function readCachedCatalog() {
+  try {
+    const cached = JSON.parse(localStorage.getItem(OSMS_CATALOG_CACHE_KEY));
+    if (
+      cached?.version === 1 &&
+      Array.isArray(cached.items) &&
+      cached.items.length
+    )
+      return cached;
+  } catch (error) {}
+  return null;
+}
+function cacheCatalog(data) {
+  try {
+    localStorage.setItem(
+      OSMS_CATALOG_CACHE_KEY,
+      JSON.stringify({ version: 1, savedAt: Date.now(), items: data }),
+    );
+  } catch (error) {}
+}
 async function initialize() {
+  let data,
+    cached = null;
   try {
     const response = await fetch(OSMS_ITEMS_URL);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    catalog = data.filter(
-      (item) => item.category === "Equipment" && item.id && item.name,
-    );
-    catalogById = new Map(catalog.map((item) => [Number(item.id), item]));
-    catalogBySlot = Object.fromEntries(
-      slots.map((slot) => [
-        slot,
-        catalog.filter((item) =>
-          (osmsCategoryBySlot[slot] || []).includes(item.sub_category),
-        ),
-      ]),
-    );
-    const genericPetEquip = {
-      id: 1802007,
-      name: "Red Top Hat",
-      category: "Equipment",
-      sub_category: "Pet Equip",
-      stats: { reqLevel: 0, tuc: 5 },
-      icon_url: "assets/red-top-hat.png",
-    };
-    catalogById.set(genericPetEquip.id, genericPetEquip);
-    catalogBySlot["Pet Equip"] = [genericPetEquip];
-    const allScrolls = data.filter(
-      (item) => item.scroll && item.id && item.name,
-    );
-    scrollById = new Map(allScrolls.map((item) => [Number(item.id), item]));
-    scrollByFamily = new Map();
-    allScrolls.forEach((item) => {
-      const key = scrollFamilyKey(item);
-      if (!scrollByFamily.has(key)) scrollByFamily.set(key, item);
-    });
-    scrollCatalog = [...scrollByFamily.values()];
-    catalogReady = true;
-    let loaded = await loadHash();
-    if (!loaded) {
-      try {
-        const saved = localStorage.getItem("maple-gearbook-v1");
-        if (saved) loadState(JSON.parse(saved));
-      } catch (e) {}
-    }
-    build();
+    data = await response.json();
+    if (!Array.isArray(data)) throw new Error("Invalid OSMS catalog format");
+    installCatalog(data);
+    catalogSource = "live";
+    cacheCatalog(data);
   } catch (error) {
-    catalogReady = false;
+    cached = readCachedCatalog();
+    if (cached) {
+      try {
+        installCatalog(cached.items);
+        catalogSource = "cached";
+      } catch (cacheError) {
+        catalogReady = false;
+      }
+    }
+  }
+  if (!catalogReady) {
     build(false);
     $("equippedCount").textContent = "Could not load OSMS equipment data";
+    return;
   }
+  const catalogStatus = $("catalogStatus");
+  catalogStatus.hidden = catalogSource !== "cached";
+  if (catalogSource === "cached") {
+    const cachedDate = new Date(cached.savedAt);
+    catalogStatus.title = Number.isNaN(cachedDate.getTime())
+      ? "Using a locally saved OSMS catalog."
+      : `Using OSMS catalog saved ${cachedDate.toLocaleString()}.`;
+  }
+  let loaded = await loadHash();
+  if (!loaded) {
+    try {
+      const saved = localStorage.getItem("maple-gearbook-v1");
+      if (saved) loadState(JSON.parse(saved));
+    } catch (error) {}
+  }
+  build();
 }
 initialize();
