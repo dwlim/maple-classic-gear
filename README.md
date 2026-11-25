@@ -6,7 +6,7 @@ The equipment panel uses the inventory screenshot supplied for the project as it
 
 Gear changes save automatically as soon as an item, base stat, or scroll quantity changes; the modal's **Done** button only closes it. When editing an item, its unscrolled base stats can be adjusted from the OSMS clean value. Values below 10 allow ±1 and values of 10 or more allow ±5, with a floor of zero. These adjusted values are included in local saves and shared links.
 
-Use **Show all item details** to open a screenshot-friendly grid of MapleStory-style item detail windows for every equipped item. It includes current adjusted and scrolled stats, requirements, job eligibility, weapon type and speed, remaining enhancement slots, and OSMS item images. The view can also be printed or saved as a PDF.
+Equipped item details render beside the inventory by default in a screenshot-friendly grid of MapleStory-style windows. They include adjusted and scrolled stats, requirements, job eligibility, weapon type and speed, remaining enhancement slots, and OSMS item images. Use **Print / Save PDF** above the item details to capture the equipment and all item windows together. Gear totals, character settings, and sharing controls appear below.
 
 Supported slots are Head, Earring, Top, Bottom, Overall, Cape, Glove, Shoes, Weapon, Shield, and Pet Equip. The current OSMS equipment catalog has no Pet Equip entries, so that slot is shown but disabled until the source includes compatible items.
 
