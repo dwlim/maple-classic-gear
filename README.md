@@ -8,7 +8,7 @@ Gear changes save automatically as soon as an item, base stat, or scroll quantit
 
 Equipped item details render beside the inventory by default in a screenshot-friendly grid of MapleStory-style windows. They include adjusted and scrolled stats, requirements, job eligibility, weapon type and speed, remaining enhancement slots, and OSMS item images. Use **Print / Save PDF** above the item details to capture the equipment and all item windows together. Gear totals, character settings, and sharing controls appear below.
 
-Supported slots are Head, Earring, Top or Overall, Bottom, Cape, Glove, Shoes, Weapon, Shield, and Pet Equip. Overall items appear in the Top position and disable the Bottom position. The current OSMS equipment catalog has no Pet Equip entries, so that slot is shown but disabled until the source includes compatible items.
+Supported slots are Head, Earring, Top or Overall, Bottom, Cape, Glove, Shoes, Weapon, Shield, and Pet Equip. Overall items appear in the Top position and disable the Bottom position. Pet Equip uses a generic Red Top Hat with five upgrade slots and supports the compatible Pet Equip scrolls. Its icon is hosted locally in `assets/red-top-hat.png`.
 
 ## Sharing and privacy
 
