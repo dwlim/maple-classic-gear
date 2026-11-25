@@ -389,7 +389,7 @@ function itemDetailCard(slot, item) {
         }[Number(speed)] || String(speed);
   const type = source.weapon?.type || source.sub_category;
   const extras = `<div class="item-window-stat"><span>Type: <strong>${escapeHtml(type || "Equipment")}</strong></span></div>${speedName ? `<div class="item-window-stat"><span>Attack Speed: <strong>${escapeHtml(speedName)}</strong></span></div>` : ""}${statRows}<div class="item-window-stat"><span>Remaining Enhancements: <strong>${Math.max(0, tuc - count)}</strong></span></div>`;
-  return `<article class="item-window" aria-label="${escapeHtml(item.name)} details"><div class="item-window-name">${escapeHtml(item.name)}${passed ? ` (+${passed})` : ""}</div><div class="item-window-top">${source.icon_url ? `<img class="item-window-image" src="${escapeHtml(source.icon_url)}" alt="${escapeHtml(item.name)}" loading="lazy">` : '<div class="item-window-image"></div>'}<div class="item-window-requirements">${requirements}</div></div><div class="item-class-tabs">${classes}</div><div class="item-window-stats">${extras}</div></article>`;
+  return `<article class="item-window" aria-label="${escapeHtml(item.name)} details"><div class="item-window-name">${escapeHtml(item.name)}${passed ? ` (+${passed})` : ""}</div><div class="item-window-top">${source.icon_url ? `<img class="item-window-image" crossorigin="anonymous" src="${escapeHtml(source.icon_url)}" alt="${escapeHtml(item.name)}" loading="eager">` : '<div class="item-window-image"></div>'}<div class="item-window-requirements">${requirements}</div></div><div class="item-class-tabs">${classes}</div><div class="item-window-stats">${extras}</div></article>`;
 }
 function renderDetailsView() {
   const equipped = slots
@@ -926,9 +926,14 @@ async function capturePreviewBlob() {
   const preview = $("detailsPreview"),
     oldWidth = preview.style.width,
     oldZoom = preview.style.zoom;
+  let restoreImages = () => {};
+  let missingImages = 0;
   preview.style.width = "720px";
   preview.style.zoom = "1";
   try {
+    const imageState = await preparePreviewImages(preview);
+    restoreImages = imageState.restore;
+    missingImages = imageState.missingImages;
     const blob = await window.htmlToImage.toBlob(preview, {
       backgroundColor:
         getComputedStyle(document.body).backgroundColor || "#f5f6f1",
@@ -937,11 +942,55 @@ async function capturePreviewBlob() {
       fontEmbedCSS: "",
     });
     if (!blob) throw new Error("PNG encoding returned no image");
-    return blob;
+    return { blob, missingImages };
   } finally {
+    restoreImages();
     preview.style.width = oldWidth;
     preview.style.zoom = oldZoom;
   }
+}
+async function preparePreviewImages(preview) {
+  const unavailable = [];
+  const images = [...preview.querySelectorAll("img")];
+  await Promise.all(
+    images.map(async (image) => {
+      if (!image.complete) {
+        await new Promise((resolve) => {
+          const finish = () => {
+            clearTimeout(timeout);
+            image.removeEventListener("load", finish);
+            image.removeEventListener("error", finish);
+            resolve();
+          };
+          const timeout = setTimeout(finish, 8000);
+          image.loading = "eager";
+          image.addEventListener("load", finish, { once: true });
+          image.addEventListener("error", finish, { once: true });
+          if (image.complete) finish();
+        });
+      }
+      if (image.naturalWidth > 0) {
+        if (image.decode) await image.decode().catch(() => {});
+        return;
+      }
+      const placeholder = document.createElement("div");
+      placeholder.className = image.className;
+      placeholder.setAttribute(
+        "aria-label",
+        `${image.alt || "Item"} image unavailable`,
+      );
+      image.replaceWith(placeholder);
+      unavailable.push([placeholder, image]);
+    }),
+  );
+  return {
+    missingImages: unavailable.length,
+    restore() {
+      unavailable.forEach(([placeholder, image]) =>
+        placeholder.replaceWith(image),
+      );
+    },
+  };
 }
 function downloadPreviewImage(blob) {
   const url = URL.createObjectURL(blob),
@@ -956,9 +1005,13 @@ async function savePreviewImage() {
   button.disabled = true;
   button.textContent = "Preparing image…";
   try {
-    const blob = await capturePreviewBlob();
+    const { blob, missingImages } = await capturePreviewBlob();
     downloadPreviewImage(blob);
-    toast("Gear image downloaded");
+    toast(
+      missingImages
+        ? `Image downloaded; ${missingImages} item icon${missingImages === 1 ? " was" : "s were"} unavailable`
+        : "Gear image downloaded",
+    );
   } catch (error) {
     console.error(error);
     toast(`Could not create image: ${error.message || "unknown error"}`);
