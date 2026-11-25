@@ -1,10 +1,12 @@
 # Maple Gearbook
 
-A small static site for building and sharing MapleStory Classic gear loadouts. Click a supported slot, enter an item and its bonuses, then copy a link to share the full loadout. Supported slots are Head, Earring, Top, Bottom, Overall, Cape, Glove, Shoes, Weapon, Shield, and Pet Equip.
+A small static site for building and sharing MapleStory Classic gear loadouts. Choose items from the live OSMS Data Explorer equipment catalog, add optional upgrade notes and extra bonuses, then copy a link to share the loadout. The catalog is fetched from the [OSMS items API](https://osmsdataexplorer.com/data/api/v1/items.json) when the page loads. Item names, categories, and base stats come from that catalog; the item search only offers items compatible with the selected slot.
+
+Supported slots are Head, Earring, Top, Bottom, Overall, Cape, Glove, Shoes, Weapon, Shield, and Pet Equip. The current OSMS equipment catalog has no Pet Equip entries, so that slot is shown but disabled until the source includes compatible items.
 
 ## Sharing and privacy
 
-There is no account or server database. Loadouts are encoded in the URL fragment and saved in the current browser's local storage. The fragment is not sent to the website host in an HTTP request. Anyone with a copied link can view the character name, world, class, level, item names, upgrade notes, and bonuses included in that link.
+There is no account or server database. Loadouts are encoded in the URL fragment and saved in the current browser's local storage. The fragment is not sent to the website host in an HTTP request. Anyone with a copied link can view the character name, world, class, level, selected item IDs and names, upgrade notes, and extra bonuses included in that link. On page load, the browser requests the public OSMS item catalog; character details and loadouts are not sent with that request.
 
 ## Run locally
 
