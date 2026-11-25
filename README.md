@@ -6,7 +6,7 @@ The equipment panel uses the inventory screenshot supplied for the project as it
 
 Gear changes save automatically as soon as an item, base stat, or scroll quantity changes; the modal's **Done** button only closes it. When editing an item, its unscrolled base stats can be adjusted from the OSMS clean value. Values below 10 allow ±1 and values of 10 or more allow ±5, with a floor of zero. These adjusted values are included in local saves and shared links.
 
-Equipped item details render beside the inventory by default in a screenshot-friendly grid of MapleStory-style windows. They include adjusted and scrolled stats, requirements, job eligibility, weapon type and speed, remaining enhancement slots, and OSMS item images. Use **Copy as image** above the preview to copy the equipment pane and all item windows as a PNG. Gear totals and sharing controls appear below.
+Equipped item details render beside the inventory by default in a screenshot-friendly grid of MapleStory-style windows. They include adjusted and scrolled stats, requirements, job eligibility, weapon type and speed, remaining enhancement slots, and OSMS item images. Use **Copy as image** above the preview to copy the equipment pane and all item windows as a PNG. Gear bonuses sit directly beneath the equipment pane; sharing controls appear below the preview.
 
 Supported slots are Head, Earring, Top or Overall, Bottom, Cape, Glove, Shoes, Weapon, Shield, and Pet Equip. Overall items appear in the Top position and disable the Bottom position. Pet Equip uses a generic Red Top Hat with five upgrade slots and supports the compatible Pet Equip scrolls. Its icon is hosted locally in `assets/red-top-hat.png`.
 
