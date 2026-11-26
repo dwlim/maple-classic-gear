@@ -1012,10 +1012,15 @@ async function capturePreviewBlob() {
   const preview = $("detailsPreview"),
     oldWidth = preview.style.width,
     oldZoom = preview.style.zoom;
+  const credit = document.createElement("div");
+  credit.className = "image-credit";
+  credit.innerHTML =
+    'Create your own loadout: <a href="https://dwlim.github.io/maple-classic-gear/">dwlim.github.io/maple-classic-gear</a>';
   let restoreImages = () => {};
   let missingImages = 0;
   preview.style.width = "720px";
   preview.style.zoom = "1";
+  preview.append(credit);
   try {
     const imageState = await preparePreviewImages(preview);
     restoreImages = imageState.restore;
@@ -1031,6 +1036,7 @@ async function capturePreviewBlob() {
     return { blob, missingImages };
   } finally {
     restoreImages();
+    credit.remove();
     preview.style.width = oldWidth;
     preview.style.zoom = oldZoom;
   }

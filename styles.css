@@ -1522,6 +1522,19 @@ body.modal-open {
   border: 1px dashed #77829b;
   background: #1d2441;
 }
+.image-credit {
+  grid-column: 1 / -1;
+  padding-top: 4px;
+  color: #c0c8d4;
+  font:
+    9px/1.4 "DM Mono",
+    monospace;
+  text-align: right;
+}
+.image-credit a {
+  color: #f0d18c;
+  text-decoration: none;
+}
 @media (max-width: 620px) {
   .details-panel {
     width: 720px;
